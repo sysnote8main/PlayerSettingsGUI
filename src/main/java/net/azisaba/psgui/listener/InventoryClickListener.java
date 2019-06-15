@@ -35,19 +35,28 @@ public class InventoryClickListener implements Listener {
 
 		e.setCancelled(true);
 
-		if (InventoryManager.isCratesItem(clickedItem)) {
+		if (InventoryManager.getAddOrSubtractPercentage(clickedItem) != 0) {
 			String key = "CratesPlus.MuteWinningAnnounce";
 			SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
 
-			boolean value = !data.getBoolean(key);
-
-			if (value == true) {
-				data.set(key, value);
-			} else {
-				data.set(key, null);
+			double now = data.getDouble(key);
+			if (!data.isSet("CratesPlus.MuteWinningAnnounce")) {
+				now = 20d;
 			}
 
-			p.playSound(p.getLocation(), Sound.BLOCK_NOTE_HAT, 1, 1);
+			now += InventoryManager.getAddOrSubtractPercentage(clickedItem);
+
+			if (now > 100) {
+				now = 100;
+				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+			} else if (now < 0) {
+				now = 0;
+				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+			} else {
+				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_HAT, 1, 1);
+			}
+
+			data.set(key, now);
 
 			p.openInventory(InventoryManager.getSettingsInventory(p));
 			return;

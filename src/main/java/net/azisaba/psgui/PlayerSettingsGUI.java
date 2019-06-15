@@ -21,13 +21,21 @@ public class PlayerSettingsGUI extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new InventoryClickListener(), this);
 
 		Bukkit.getPluginCommand("settings").setExecutor(new SettingsCommand());
-		Bukkit.getPluginCommand("settings").setPermission(Chat.f("&c権限がありません！"));
+		Bukkit.getPluginCommand("settings").setPermissionMessage(Chat.f("&c権限がありません！"));
 
 		Bukkit.getLogger().info(getName() + " enabled.");
 	}
 
 	@Override
 	public void onDisable() {
+
+		Bukkit.getOnlinePlayers().forEach(p -> {
+			if (p.getOpenInventory() != null && p.getOpenInventory().getTopInventory() != null) {
+				if (InventoryManager.isSettingsInventory(p.getOpenInventory().getTopInventory())) {
+					p.closeInventory();
+				}
+			}
+		});
 		Bukkit.getLogger().info(getName() + " disabled.");
 	}
 }

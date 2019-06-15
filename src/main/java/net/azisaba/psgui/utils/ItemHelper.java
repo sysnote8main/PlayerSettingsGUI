@@ -2,6 +2,7 @@ package net.azisaba.psgui.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -52,6 +53,14 @@ public class ItemHelper {
 		ItemMeta meta = item.getItemMeta();
 		meta.addEnchant(Enchantment.DURABILITY, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		item.setItemMeta(meta);
+	}
+
+	public static void addLore(ItemStack item, String msg) {
+		ItemMeta meta = item.getItemMeta();
+		List<String> lore = new ArrayList<String>(meta.getLore());
+		lore.add(msg);
+		meta.setLore(lore);
 		item.setItemMeta(meta);
 	}
 
