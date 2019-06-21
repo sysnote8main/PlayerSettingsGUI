@@ -5,7 +5,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.azisaba.psgui.InventoryManager;
+import net.azisaba.psgui.PlayerSettingsGUI;
+import net.azisaba.psgui.inventory.MainInventory;
 import net.azisaba.psgui.utils.Chat;
 
 public class SettingsCommand implements CommandExecutor {
@@ -19,7 +20,8 @@ public class SettingsCommand implements CommandExecutor {
 
 		Player p = (Player) sender;
 
-		p.openInventory(InventoryManager.getSettingsInventory(p));
+		p.openInventory(
+				PlayerSettingsGUI.getPlugin().getGuiManager().getMatchInstance(MainInventory.class).createInventory(p));
 		return true;
 	}
 }
