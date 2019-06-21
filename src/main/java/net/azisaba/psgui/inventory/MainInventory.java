@@ -14,7 +14,7 @@ import net.azisaba.psgui.utils.ItemHelper;
 
 public class MainInventory extends ClickableGUI {
 
-	private ItemStack crates, sound;
+	private ItemStack crates, sound, comingsoon;
 
 	private Inventory inv;
 
@@ -24,6 +24,8 @@ public class MainInventory extends ClickableGUI {
 			initItems();
 
 			inv = Bukkit.createInventory(null, getSize(), getTitle());
+
+			inv.setItem(22, comingsoon);
 
 			inv.setItem(48, crates);
 			inv.setItem(50, sound);
@@ -83,5 +85,8 @@ public class MainInventory extends ClickableGUI {
 			sound = ItemHelper.create(Material.DIAMOND_SPADE, Chat.f("&6銃の音量設定"), Chat.f("&7銃の音量を調節できます"),
 					Chat.f("&7うるさい場合はこの値を下げてください"));
 		}
+
+		if (comingsoon == null)
+			comingsoon = ItemHelper.create(Material.EYE_OF_ENDER, Chat.f("&6Coming soon..."));
 	}
 }
