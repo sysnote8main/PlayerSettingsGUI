@@ -1,8 +1,5 @@
 package net.azisaba.psgui.inventory;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -44,8 +41,6 @@ public class SoundControlInventory extends ClickableGUI {
 		return inv;
 	}
 
-	private HashMap<UUID, Long> doubleClickPreventer = new HashMap<>();
-
 	@Override
 	public void onClickInventory(InventoryClickEvent e) {
 		e.setCancelled(true);
@@ -54,10 +49,6 @@ public class SoundControlInventory extends ClickableGUI {
 		ItemStack clicked = e.getCurrentItem();
 
 		if (clicked == null) {
-			return;
-		}
-
-		if (doubleClickPreventer.getOrDefault(p.getUniqueId(), 0L) + 100 > System.currentTimeMillis()) {
 			return;
 		}
 
@@ -99,8 +90,6 @@ public class SoundControlInventory extends ClickableGUI {
 		p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 
 		e.getClickedInventory().setItem(4, getMiddleSign(p));
-
-		doubleClickPreventer.put(p.getUniqueId(), System.currentTimeMillis());
 	}
 
 	private ItemStack getMiddleSign(Player p) {

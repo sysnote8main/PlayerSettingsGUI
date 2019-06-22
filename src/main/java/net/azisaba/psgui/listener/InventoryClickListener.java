@@ -1,5 +1,8 @@
 package net.azisaba.psgui.listener;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,18 +14,28 @@ import net.azisaba.psgui.inventory.ClickableGUI;
 
 public class InventoryClickListener implements Listener {
 
+	private HashMap<UUID, Long> doubleClickPreventer = new HashMap<>();
+
 	@EventHandler
 	public void clickInventory(InventoryClickEvent e) {
 		if (!(e.getWhoClicked() instanceof Player)) {
 			return;
 		}
 
+		Player p = (Player) e.getWhoClicked();
 		Inventory openingInv = e.getInventory();
 		ClickableGUI gui = PlayerSettingsGUI.getPlugin().getGuiManager().getMatchGUI(openingInv);
 
 		if (gui == null)
 			return;
 
+		if (doubleClickPreventer.getOrDefault(p.getUniqueId(), 0L) + 100 > System.currentTimeMillis()) {
+			e.setCancelled(true);
+			return;
+		}
+
 		gui.onClickInventory(e);
+
+		doubleClickPreventer.put(p.getUniqueId(), System.currentTimeMillis());
 	}
 }
