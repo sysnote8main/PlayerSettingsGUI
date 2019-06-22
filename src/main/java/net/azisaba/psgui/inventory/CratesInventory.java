@@ -1,10 +1,9 @@
 package net.azisaba.psgui.inventory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -45,8 +44,6 @@ public class CratesInventory extends ClickableGUI {
 		return inv;
 	}
 
-	private HashMap<UUID, Long> doubleClickPreventer = new HashMap<>();
-
 	@Override
 	public void onClickInventory(InventoryClickEvent e) {
 		e.setCancelled(true);
@@ -55,10 +52,6 @@ public class CratesInventory extends ClickableGUI {
 		ItemStack item = e.getCurrentItem();
 
 		if (item == null) {
-			return;
-		}
-
-		if (doubleClickPreventer.getOrDefault(p.getUniqueId(), 0L) + 100 > System.currentTimeMillis()) {
 			return;
 		}
 
@@ -84,24 +77,25 @@ public class CratesInventory extends ClickableGUI {
 		}
 
 		SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
-		double current = 20;
+		double value = 20;
 		if (data.isSet(key))
-			current = data.getDouble(key);
+			value = data.getDouble(key);
 
-		current += change;
+		value += change;
 
-		if (current > 100) {
-			current = 100;
-		} else if (current < 0) {
-			current = 0;
+		if (value > 100) {
+			value = 100;
+		} else if (value < 0) {
+			value = 0;
 		}
 
-		data.set(key, current);
+		// 小数点第2位で四捨五入
+		value = new BigDecimal(value).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+		data.set(key, value);
 		p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 
 		updateInventory(e.getClickedInventory(), p);
-
-		doubleClickPreventer.put(p.getUniqueId(), System.currentTimeMillis());
 	}
 
 	private void initItems() {
@@ -125,6 +119,9 @@ public class CratesInventory extends ClickableGUI {
 		double percentage = 20;
 		if (data.isSet(key))
 			percentage = data.getDouble(key);
+
+		// 小数点第2位で四捨五入
+		percentage = new BigDecimal(percentage).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
 
 		List<String> lore = new ArrayList<>(Arrays.asList(Chat.f("&7これより大きい確率に設定されている当たりは聞こえなくなります。"),
 				"", Chat.f("&a現在の設定: &e{0}%", percentage), "", Chat.f("&c※&7自分がガチャを回したときは全て表示されます")));
