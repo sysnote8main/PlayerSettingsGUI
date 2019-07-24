@@ -3,7 +3,7 @@
 
   <groupId>net.azisaba</groupId>
   <artifactId>PlayerSettingsGUI</artifactId>
-  <version>0.0.1-beta</version>
+  <version>1.0.0</version>
 
   <name>${project.artifactId}</name>
   <description>A plugin that edit player settings using Inventory GUI</description>
