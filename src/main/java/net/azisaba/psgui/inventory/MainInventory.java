@@ -18,10 +18,16 @@ import net.azisaba.psgui.utils.ItemHelper;
 
 public class MainInventory extends ClickableGUI {
 
+    private final String rankingAnonymousKey = "RankingDisplayer.Anonymous";
+    private final String entryOnRejoinKey = "LeonGunWar.EntryOnRejoin";
+    private final String privateChatPlaySoundKey = "PrivateChatNotify.PlaySound";
+    private final String privateChatDisplayTitleKey = "PrivateChatNotify.DisplayTitle";
+
     private ItemStack rankingAno, rankingAnoStatusEnable, rankingAnoStatusDisable,
             entryOnRejoin, entryOnRejoinEnable, entryOnRejoinDisable,
-            crates, sound,
-            comingsoon;
+            soundOnPrivateChat, soundOnPrivateChatEnable, soundOnPrivateChatDisable,
+            titleOnPrivateChat, titleOnPrivateChatEnable, titleOnPrivateChatDisable,
+            crates, sound;
 
     @Override
     public Inventory createInventory(Player p) {
@@ -31,20 +37,31 @@ public class MainInventory extends ClickableGUI {
         Inventory inv = Bukkit.createInventory(null, getSize(), getTitle());
 
         inv.setItem(11, rankingAno);
-        if ( data.isSet("RankingDisplayer.Anonymous") && data.getBoolean("RankingDisplayer.Anonymous") ) {
+        if ( data.isSet(rankingAnonymousKey) && data.getBoolean(rankingAnonymousKey) ) {
             inv.setItem(20, rankingAnoStatusEnable);
         } else {
             inv.setItem(20, rankingAnoStatusDisable);
         }
 
-        inv.setItem(15, entryOnRejoin);
-        if ( data.isSet("LeonGunWar.EntryOnRejoin") && data.getBoolean("LeonGunWar.EntryOnRejoin") ) {
-            inv.setItem(24, entryOnRejoinEnable);
+        inv.setItem(13, entryOnRejoin);
+        if ( data.isSet(entryOnRejoinKey) && data.getBoolean(entryOnRejoinKey) ) {
+            inv.setItem(22, entryOnRejoinEnable);
         } else {
-            inv.setItem(24, entryOnRejoinDisable);
+            inv.setItem(22, entryOnRejoinDisable);
         }
 
-        inv.setItem(22, comingsoon);
+        inv.setItem(15, soundOnPrivateChat);
+        if ( data.isSet(privateChatPlaySoundKey) && data.getBoolean(privateChatPlaySoundKey) ) {
+            inv.setItem(24, soundOnPrivateChatEnable);
+        } else {
+            inv.setItem(24, soundOnPrivateChatDisable);
+        }
+        inv.setItem(16, titleOnPrivateChat);
+        if ( data.isSet(privateChatDisplayTitleKey) && data.getBoolean(privateChatDisplayTitleKey) ) {
+            inv.setItem(25, titleOnPrivateChatEnable);
+        } else {
+            inv.setItem(25, titleOnPrivateChatDisable);
+        }
 
         inv.setItem(48, crates);
         inv.setItem(50, sound);
@@ -67,13 +84,13 @@ public class MainInventory extends ClickableGUI {
         Inventory inv = null;
         boolean playSound = true;
         if ( Arrays.asList(rankingAno, rankingAnoStatusEnable, rankingAnoStatusDisable).contains(clickedItem) ) {
-
-            processToggleRankingAnonymous(p, e.getClickedInventory());
-
+            toggle(p, rankingAnonymousKey, e.getClickedInventory(), 20, rankingAnoStatusEnable, rankingAnoStatusDisable);
         } else if ( Arrays.asList(entryOnRejoin, entryOnRejoinDisable, entryOnRejoinEnable).contains(clickedItem) ) {
-
-            processToggleEntryOnRejoin(p, e.getClickedInventory());
-
+            toggle(p, entryOnRejoinKey, e.getClickedInventory(), 22, entryOnRejoinEnable, entryOnRejoinDisable);
+        } else if ( Arrays.asList(soundOnPrivateChat, soundOnPrivateChatDisable, soundOnPrivateChatEnable).contains(clickedItem) ) {
+            toggle(p, privateChatPlaySoundKey, e.getClickedInventory(), 24, soundOnPrivateChatEnable, soundOnPrivateChatDisable);
+        } else if ( Arrays.asList(titleOnPrivateChat, titleOnPrivateChatDisable, titleOnPrivateChatEnable).contains(clickedItem) ) {
+            toggle(p, privateChatDisplayTitleKey, e.getClickedInventory(), 25, titleOnPrivateChatEnable, titleOnPrivateChatDisable);
         } else if ( clickedItem.equals(crates) ) {
             ClickableGUIManager manager = PlayerSettingsGUI.getPlugin().getGuiManager();
             inv = manager.getMatchInstance(CratesInventory.class).createInventory(p);
@@ -95,33 +112,16 @@ public class MainInventory extends ClickableGUI {
         }
     }
 
-    private void processToggleRankingAnonymous(Player p, Inventory clicked) {
+    private void toggle(Player p, String key, Inventory clickedInventory, int slot, ItemStack enableItem, ItemStack disableItem) {
         SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
-        boolean now = data.isSet("RankingDisplayer.Anonymous") && data.getBoolean("RankingDisplayer.Anonymous");
-
+        boolean now = data.isSet(key) && data.getBoolean(key);
         now = !now;
-
         if ( now ) {
-            data.set("RankingDisplayer.Anonymous", now);
-            clicked.setItem(20, rankingAnoStatusEnable);
+            data.set(key, now);
+            clickedInventory.setItem(slot, enableItem);
         } else {
-            data.set("RankingDisplayer.Anonymous", null);
-            clicked.setItem(20, rankingAnoStatusDisable);
-        }
-    }
-
-    private void processToggleEntryOnRejoin(Player p, Inventory clicked) {
-        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
-        boolean now = data.isSet("LeonGunWar.EntryOnRejoin") && data.getBoolean("LeonGunWar.EntryOnRejoin");
-
-        now = !now;
-
-        if ( now ) {
-            data.set("LeonGunWar.EntryOnRejoin", now);
-            clicked.setItem(24, entryOnRejoinEnable);
-        } else {
-            data.set("LeonGunWar.EntryOnRejoin", null);
-            clicked.setItem(24, entryOnRejoinDisable);
+            data.set(key, null);
+            clickedInventory.setItem(slot, disableItem);
         }
     }
 
@@ -146,9 +146,6 @@ public class MainInventory extends ClickableGUI {
             sound = ItemHelper.create(Material.DIAMOND_SPADE, Chat.f("&6銃の音量設定"), Chat.f("&7銃の音量を調節できます"),
                     Chat.f("&7うるさい場合はこの値を下げてください"));
         }
-        if ( comingsoon == null ) {
-            comingsoon = ItemHelper.create(Material.ANVIL, Chat.f("&6Coming soon..."));
-        }
 
         if ( rankingAno == null ) {
             rankingAno = ItemHelper.create(Material.SIGN, Chat.f("&cキルランキングを匿名にする"), "",
@@ -169,11 +166,37 @@ public class MainInventory extends ClickableGUI {
         }
         if ( entryOnRejoinEnable == null ) {
             entryOnRejoinEnable = ItemHelper.create(enable, Chat.f("&7現在の設定: &a有効"), "",
-                    Chat.f("&7途中参加時に自動でエントリーされます。"), Chat.f("&c注意: エントリーすると次の試合開始時に自動TPされます。"));
+                    Chat.f("&7途中参加時に自動でエントリーされます"), Chat.f("&c注意: エントリーすると次の試合開始時に自動TPされます"));
         }
         if ( entryOnRejoinDisable == null ) {
             entryOnRejoinDisable = ItemHelper.create(disable, Chat.f("&7現在の設定: &c無効"), "",
-                    Chat.f("&7途中参加してもエントリーされません。"), Chat.f("&7(デフォルト値)"));
+                    Chat.f("&7途中参加してもエントリーされません"), Chat.f("&7(デフォルト値)"));
+        }
+
+        if ( soundOnPrivateChat == null ) {
+            soundOnPrivateChat = ItemHelper.create(Material.ANVIL, Chat.f("&c個人チャット受信時に音を鳴らす"), "",
+                    Chat.f("&7個人チャットを受け取ったときに金床の高い音を鳴らします"));
+        }
+        if ( soundOnPrivateChatEnable == null ) {
+            soundOnPrivateChatEnable = ItemHelper.create(enable, Chat.f("&7現在の設定: &a有効"), "",
+                    Chat.f("&7個人チャットを受信したら音を鳴らします"));
+        }
+        if ( soundOnPrivateChatDisable == null ) {
+            soundOnPrivateChatDisable = ItemHelper.create(disable, Chat.f("&7現在の設定: &c無効"), "",
+                    Chat.f("&7個人チャットを受信しても音を鳴らしません"));
+        }
+
+        if ( titleOnPrivateChat == null ) {
+            titleOnPrivateChat = ItemHelper.create(Material.SIGN, Chat.f("&c個人チャット受信時にタイトルを表示する"), "",
+                    Chat.f("&7個人チャットを受け取ったときに画面上にメッセージを表示します"));
+        }
+        if ( titleOnPrivateChatEnable == null ) {
+            titleOnPrivateChatEnable = ItemHelper.create(enable, Chat.f("&7現在の設定: &a有効"), "",
+                    Chat.f("&7個人チャットを受信したらタイトルを表示します"));
+        }
+        if ( titleOnPrivateChatDisable == null ) {
+            titleOnPrivateChatDisable = ItemHelper.create(disable, Chat.f("&7現在の設定: &c無効"), "",
+                    Chat.f("&7個人チャットを受信してもタイトルを表示しません"));
         }
     }
 }
