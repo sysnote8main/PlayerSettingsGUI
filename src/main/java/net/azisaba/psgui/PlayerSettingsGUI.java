@@ -15,34 +15,34 @@ import lombok.Getter;
 
 public class PlayerSettingsGUI extends JavaPlugin {
 
-	@Getter
-	private static PlayerSettingsGUI plugin;
-	@Getter
-	private ClickableGUIManager guiManager;
+    @Getter
+    private static PlayerSettingsGUI plugin;
+    @Getter
+    private ClickableGUIManager guiManager;
 
-	@Override
-	public void onEnable() {
-		plugin = this;
+    @Override
+    public void onEnable() {
+        plugin = this;
 
-		guiManager = new ClickableGUIManager();
+        guiManager = new ClickableGUIManager();
 
-		guiManager.registerGUI(new MainInventory());
-		guiManager.registerGUI(new CratesInventory());
-		guiManager.registerGUI(new SoundControlInventory());
+        guiManager.registerGUI(new MainInventory());
+        guiManager.registerGUI(new CratesInventory());
+        guiManager.registerGUI(new SoundControlInventory());
 
-		Bukkit.getPluginManager().registerEvents(new InventoryClickListener(), this);
+        Bukkit.getPluginManager().registerEvents(new InventoryClickListener(), this);
 
-		Bukkit.getPluginCommand("settings").setExecutor(new SettingsCommand());
-		Bukkit.getPluginCommand("settings").setPermissionMessage(Chat.f("&c権限がありません！"));
+        Bukkit.getPluginCommand("settings").setExecutor(new SettingsCommand());
+        Bukkit.getPluginCommand("settings").setPermissionMessage(Chat.f("&c権限がありません！"));
 
-		Bukkit.getLogger().info(getName() + " enabled.");
-	}
+        Bukkit.getLogger().info(getName() + " enabled.");
+    }
 
-	@Override
-	public void onDisable() {
+    @Override
+    public void onDisable() {
 
-		guiManager.closeAllInventories();
+        guiManager.closeAllInventories();
 
-		Bukkit.getLogger().info(getName() + " disabled.");
-	}
+        Bukkit.getLogger().info(getName() + " disabled.");
+    }
 }

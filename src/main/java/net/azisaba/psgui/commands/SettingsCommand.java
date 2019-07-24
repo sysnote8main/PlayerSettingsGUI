@@ -11,17 +11,17 @@ import net.azisaba.psgui.utils.Chat;
 
 public class SettingsCommand implements CommandExecutor {
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) {
-			sender.sendMessage(Chat.f("&cこのコマンドはプレイヤーのみ有効です"));
-			return true;
-		}
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if ( !(sender instanceof Player) ) {
+            sender.sendMessage(Chat.f("&cこのコマンドはプレイヤーのみ有効です"));
+            return true;
+        }
 
-		Player p = (Player) sender;
+        Player p = (Player) sender;
 
-		p.openInventory(
-				PlayerSettingsGUI.getPlugin().getGuiManager().getMatchInstance(MainInventory.class).createInventory(p));
-		return true;
-	}
+        p.openInventory(
+                PlayerSettingsGUI.getPlugin().getGuiManager().getMatchInstance(MainInventory.class).createInventory(p));
+        return true;
+    }
 }

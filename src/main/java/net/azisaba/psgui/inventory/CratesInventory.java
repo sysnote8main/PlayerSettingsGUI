@@ -21,138 +21,175 @@ import net.azisaba.psgui.utils.ItemHelper;
 
 public class CratesInventory extends ClickableGUI {
 
-	private final String key = "CratesPlus.MuteWinningAnnounce";
-	private ItemStack addLittle, addLarge, subtractLittle, subtractLarge, backArrow;
+    private final String key = "CratesPlus.MuteWinningAnnounce";
+    private final String ownNotifyKey = "CratesPlus.MuteOwnWinningAnnounce";
+    private ItemStack addLittle, addLarge, subtractLittle, subtractLarge, backArrow;
+    private ItemStack muteOwnEnable, muteOwnDisable;
 
-	@Override
-	public Inventory createInventory(Player p) {
-		initItems();
-		Inventory inv = Bukkit.createInventory(null, getSize(), getTitle());
+    @Override
+    public Inventory createInventory(Player p) {
+        initItems();
+        Inventory inv = Bukkit.createInventory(null, getSize(), getTitle());
 
-		inv.setItem(0, subtractLarge);
-		inv.setItem(1, subtractLarge);
-		inv.setItem(2, subtractLittle);
-		inv.setItem(3, subtractLittle);
-		inv.setItem(4, getMiddleSign(p));
-		inv.setItem(5, addLittle);
-		inv.setItem(6, addLittle);
-		inv.setItem(7, addLarge);
-		inv.setItem(8, addLarge);
+        inv.setItem(0, subtractLarge);
+        inv.setItem(1, subtractLarge);
+        inv.setItem(2, subtractLittle);
+        inv.setItem(3, subtractLittle);
+        inv.setItem(4, getMiddleSign(p));
+        inv.setItem(5, addLittle);
+        inv.setItem(6, addLittle);
+        inv.setItem(7, addLarge);
+        inv.setItem(8, addLarge);
 
-		inv.setItem(22, backArrow);
+        inv.setItem(22, backArrow);
 
-		return inv;
-	}
+        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+        boolean muteOwn = data.isSet(ownNotifyKey) && data.getBoolean(ownNotifyKey);
+        if ( muteOwn ) {
+            inv.setItem(26, muteOwnEnable);
+        } else {
+            inv.setItem(26, muteOwnDisable);
+        }
 
-	@Override
-	public void onClickInventory(InventoryClickEvent e) {
-		e.setCancelled(true);
+        return inv;
+    }
 
-		Player p = (Player) e.getWhoClicked();
-		ItemStack item = e.getCurrentItem();
+    @Override
+    public void onClickInventory(InventoryClickEvent e) {
+        e.setCancelled(true);
 
-		if (item == null) {
-			return;
-		}
+        Player p = (Player) e.getWhoClicked();
+        ItemStack item = e.getCurrentItem();
 
-		if (item.equals(backArrow)) {
-			p.openInventory(PlayerSettingsGUI.getPlugin().getGuiManager().getMatchInstance(MainInventory.class)
-					.createInventory(p));
-			p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-			return;
-		}
+        if ( item == null ) {
+            return;
+        }
 
-		double change = 0;
+        boolean processed = true;
+        if ( item.equals(backArrow) ) {
+            p.openInventory(PlayerSettingsGUI.getPlugin().getGuiManager().getMatchInstance(MainInventory.class).createInventory(p));
+        } else if ( item.equals(muteOwnDisable) ) {
+            SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+            data.set(ownNotifyKey, true);
+            e.getClickedInventory().setItem(26, muteOwnEnable);
+        } else if ( item.equals(muteOwnEnable) ) {
+            SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+            data.set(ownNotifyKey, false);
+            e.getClickedInventory().setItem(26, muteOwnDisable);
+        } else {
+            processed = false;
+        }
 
-		if (item.equals(subtractLarge)) {
-			change = -1;
-		} else if (item.equals(subtractLittle)) {
-			change = -0.1;
-		} else if (item.equals(addLittle)) {
-			change = 0.1;
-		} else if (item.equals(addLarge)) {
-			change = 1;
-		} else {
-			return;
-		}
+        if ( processed ) {
+            p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+            return;
+        }
 
-		SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
-		double value = 20;
-		if (data.isSet(key))
-			value = data.getDouble(key);
+        double change = 0;
 
-		value += change;
+        if ( item.equals(subtractLarge) ) {
+            change = -1;
+        } else if ( item.equals(subtractLittle) ) {
+            change = -0.1;
+        } else if ( item.equals(addLittle) ) {
+            change = 0.1;
+        } else if ( item.equals(addLarge) ) {
+            change = 1;
+        } else {
+            return;
+        }
 
-		if (value > 100) {
-			value = 100;
-		} else if (value < 0) {
-			value = 0;
-		}
+        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+        double value = 1d;
+        if ( data.isSet(key) ) {
+            value = data.getDouble(key);
+        }
 
-		// 小数点第2位で四捨五入
-		value = new BigDecimal(value).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+        value += change;
 
-		data.set(key, value);
-		p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+        if ( value > 100 ) {
+            value = 100;
+        } else if ( value < 0 ) {
+            value = 0;
+        }
 
-		updateInventory(e.getClickedInventory(), p);
-	}
+        // 小数点第2位で四捨五入
+        value = new BigDecimal(value).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
 
-	private void initItems() {
-		if (addLittle == null)
-			addLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 5, Chat.f("&e0.1%&a上げる"));
-		if (addLarge == null)
-			addLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 13, Chat.f("&e1%&a上げる"));
+        data.set(key, value);
+        p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
 
-		if (subtractLittle == null)
-			subtractLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 1, Chat.f("&e0.1%&c下げる"));
-		if (subtractLarge == null)
-			subtractLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 14, Chat.f("&e1%&c下げる"));
+        updateInventory(e.getClickedInventory(), p);
+    }
 
-		if (backArrow == null)
-			backArrow = ItemHelper.create(Material.ARROW, Chat.f("&6戻る"));
-	}
+    private void initItems() {
+        if ( addLittle == null ) {
+            addLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 5, Chat.f("&e0.1%&a上げる"));
+        }
+        if ( addLarge == null ) {
+            addLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 13, Chat.f("&e1%&a上げる"));
+        }
 
-	private ItemStack getMiddleSign(Player p) {
-		SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+        if ( subtractLittle == null ) {
+            subtractLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 1, Chat.f("&e0.1%&c下げる"));
+        }
+        if ( subtractLarge == null ) {
+            subtractLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 14, Chat.f("&e1%&c下げる"));
+        }
 
-		double percentage = 20;
-		if (data.isSet(key))
-			percentage = data.getDouble(key);
+        if ( backArrow == null ) {
+            backArrow = ItemHelper.create(Material.ARROW, Chat.f("&6戻る"));
+        }
 
-		// 小数点第2位で四捨五入
-		percentage = new BigDecimal(percentage).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+        if ( muteOwnEnable == null ) {
+            muteOwnEnable = ItemHelper.create(Material.EYE_OF_ENDER, Chat.f("&e自分のログにも適用する &7(&a有効&7)"), Chat.f("&7自分のガチャログも&c上の設定が適用&7されます！"));
+        }
+        if ( muteOwnDisable == null ) {
+            muteOwnDisable = ItemHelper.create(Material.ENDER_PEARL, Chat.f("&e自分のログにも適用する &7(&c無効&7)"), Chat.f("&7自分のガチャログは確率を問わず&c全て&7チャットに流れます！"));
+        }
+    }
 
-		List<String> lore = new ArrayList<>(Arrays.asList(Chat.f("&7これより大きい確率に設定されている当たりは聞こえなくなります。"),
-				"", Chat.f("&a現在の設定: &e{0}%", percentage), "", Chat.f("&c※&7自分がガチャを回したときは全て表示されます")));
+    private ItemStack getMiddleSign(Player p) {
+        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
 
-		if (percentage < 1) {
-			lore.add(4, Chat.f("&c警告: 現在の設定では銃などのレアアイテムの当たりが聞こえない場合があります！"));
-			lore.add(5, "");
-		}
+        double percentage = 1d;
+        if ( data.isSet(key) ) {
+            percentage = data.getDouble(key);
+        }
 
-		return ItemHelper.create(Material.SIGN, Chat.f("&7表示しない当たりの確率"), lore.toArray(new String[lore.size()]));
-	}
+        // 小数点第2位で四捨五入
+        percentage = new BigDecimal(percentage).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
 
-	private void updateInventory(Inventory inv, Player p) {
-		ItemStack middleSign = inv.getItem(4);
-		if (middleSign == null || middleSign.getType() != Material.SIGN) {
-			p.openInventory(createInventory(p));
-			return;
-		}
+        List<String> lore = new ArrayList<>(Arrays.asList(Chat.f("&7これより大きい確率に設定されている当たりは聞こえなくなります。"),
+                "", Chat.f("&a現在の設定: &e{0}%", percentage), ""));
 
-		middleSign = getMiddleSign(p);
+        if ( percentage < 1 ) {
+            lore.add(4, Chat.f("&c警告: 現在の設定では銃などのレアアイテムの当たりが聞こえない場合があります！"));
+            lore.add(5, "");
+        }
 
-		inv.setItem(4, middleSign);
-	}
+        return ItemHelper.create(Material.SIGN, Chat.f("&7表示しない当たりの確率"), lore.toArray(new String[lore.size()]));
+    }
 
-	@Override
-	public int getSize() {
-		return 9 * 3;
-	}
+    private void updateInventory(Inventory inv, Player p) {
+        ItemStack middleSign = inv.getItem(4);
+        if ( middleSign == null || middleSign.getType() != Material.SIGN ) {
+            p.openInventory(createInventory(p));
+            return;
+        }
 
-	@Override
-	public String getTitle() {
-		return Chat.f("&cPlayer Settings &e- &aCrates");
-	}
+        middleSign = getMiddleSign(p);
+
+        inv.setItem(4, middleSign);
+    }
+
+    @Override
+    public int getSize() {
+        return 9 * 3;
+    }
+
+    @Override
+    public String getTitle() {
+        return Chat.f("&cPlayer Settings &e- &aCrates");
+    }
 }

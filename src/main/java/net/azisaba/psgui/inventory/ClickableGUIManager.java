@@ -8,46 +8,47 @@ import org.bukkit.inventory.Inventory;
 
 public class ClickableGUIManager {
 
-	private List<ClickableGUI> guiList = new ArrayList<>();
+    private final List<ClickableGUI> guiList = new ArrayList<>();
 
-	public void registerGUI(ClickableGUI gui) {
-		if (!guiList.contains(gui)) {
-			guiList.add(gui);
-		}
-	}
+    public void registerGUI(ClickableGUI gui) {
+        if ( !guiList.contains(gui) ) {
+            guiList.add(gui);
+        }
+    }
 
-	public ClickableGUI getMatchGUI(Inventory inv) {
-		for (ClickableGUI gui : guiList) {
-			if (gui.isSameInventory(inv)) {
-				return gui;
-			}
-		}
+    public ClickableGUI getMatchGUI(Inventory inv) {
+        for ( ClickableGUI gui : guiList ) {
+            if ( gui.isSameInventory(inv) ) {
+                return gui;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public ClickableGUI getMatchInstance(Class<? extends ClickableGUI> clazz) {
-		for (ClickableGUI gui : guiList) {
-			if (gui.getClass().equals(clazz)) {
-				return gui;
-			}
-		}
+    public ClickableGUI getMatchInstance(Class<? extends ClickableGUI> clazz) {
+        for ( ClickableGUI gui : guiList ) {
+            if ( gui.getClass().equals(clazz) ) {
+                return gui;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public void closeAllInventories() {
-		Bukkit.getOnlinePlayers().forEach(p -> {
+    public void closeAllInventories() {
+        Bukkit.getOnlinePlayers().forEach(p -> {
 
-			if (p.getOpenInventory() == null || p.getOpenInventory().getTopInventory() == null)
-				return;
+            if ( p.getOpenInventory() == null || p.getOpenInventory().getTopInventory() == null ) {
+                return;
+            }
 
-			for (ClickableGUI gui : guiList) {
-				if (gui.getTitle().equals(p.getOpenInventory().getTopInventory().getTitle())) {
-					p.closeInventory();
-					return;
-				}
-			}
-		});
-	}
+            for ( ClickableGUI gui : guiList ) {
+                if ( gui.getTitle().equals(p.getOpenInventory().getTopInventory().getTitle()) ) {
+                    p.closeInventory();
+                    return;
+                }
+            }
+        });
+    }
 }
