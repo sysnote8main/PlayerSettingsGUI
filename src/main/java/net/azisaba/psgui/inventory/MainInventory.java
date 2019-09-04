@@ -22,9 +22,11 @@ public class MainInventory extends ClickableGUI {
     private final String entryOnRejoinKey = "LeonGunWar.EntryOnRejoin";
     private final String privateChatPlaySoundKey = "PrivateChatNotify.PlaySound";
     private final String privateChatDisplayTitleKey = "PrivateChatNotify.DisplayTitle";
+    private final String showKDOnActionBarKey = "LeonGunWar.ShowKDRatioOnActionBar";
 
     private ItemStack rankingAno, rankingAnoStatusEnable, rankingAnoStatusDisable,
             entryOnRejoin, entryOnRejoinEnable, entryOnRejoinDisable,
+            showKD, showKDEnable, showKDDisable,
             soundOnPrivateChat, soundOnPrivateChatEnable, soundOnPrivateChatDisable,
             titleOnPrivateChat, titleOnPrivateChatEnable, titleOnPrivateChatDisable,
             crates, sound;
@@ -36,18 +38,25 @@ public class MainInventory extends ClickableGUI {
 
         Inventory inv = Bukkit.createInventory(null, getSize(), getTitle());
 
-        inv.setItem(11, rankingAno);
+        inv.setItem(10, rankingAno);
         if ( data.isSet(rankingAnonymousKey) && data.getBoolean(rankingAnonymousKey) ) {
-            inv.setItem(20, rankingAnoStatusEnable);
+            inv.setItem(19, rankingAnoStatusEnable);
         } else {
-            inv.setItem(20, rankingAnoStatusDisable);
+            inv.setItem(19, rankingAnoStatusDisable);
         }
 
-        inv.setItem(13, entryOnRejoin);
+        inv.setItem(12, entryOnRejoin);
         if ( data.isSet(entryOnRejoinKey) && data.getBoolean(entryOnRejoinKey) ) {
-            inv.setItem(22, entryOnRejoinEnable);
+            inv.setItem(21, entryOnRejoinEnable);
         } else {
-            inv.setItem(22, entryOnRejoinDisable);
+            inv.setItem(21, entryOnRejoinDisable);
+        }
+
+        inv.setItem(13, showKD);
+        if ( data.isSet(showKDOnActionBarKey) && data.getBoolean(showKDOnActionBarKey) ) {
+            inv.setItem(22, showKDEnable);
+        } else {
+            inv.setItem(22, showKDDisable);
         }
 
         inv.setItem(15, soundOnPrivateChat);
@@ -84,9 +93,11 @@ public class MainInventory extends ClickableGUI {
         Inventory inv = null;
         boolean playSound = true;
         if ( Arrays.asList(rankingAno, rankingAnoStatusEnable, rankingAnoStatusDisable).contains(clickedItem) ) {
-            toggle(p, rankingAnonymousKey, e.getClickedInventory(), 20, rankingAnoStatusEnable, rankingAnoStatusDisable);
+            toggle(p, rankingAnonymousKey, e.getClickedInventory(), 19, rankingAnoStatusEnable, rankingAnoStatusDisable);
         } else if ( Arrays.asList(entryOnRejoin, entryOnRejoinDisable, entryOnRejoinEnable).contains(clickedItem) ) {
-            toggle(p, entryOnRejoinKey, e.getClickedInventory(), 22, entryOnRejoinEnable, entryOnRejoinDisable);
+            toggle(p, entryOnRejoinKey, e.getClickedInventory(), 21, entryOnRejoinEnable, entryOnRejoinDisable);
+        } else if ( Arrays.asList(showKD, showKDEnable, showKDDisable).contains(clickedItem) ) {
+            toggle(p, showKDOnActionBarKey, e.getClickedInventory(), 22, showKDEnable, showKDDisable); // TODO
         } else if ( Arrays.asList(soundOnPrivateChat, soundOnPrivateChatDisable, soundOnPrivateChatEnable).contains(clickedItem) ) {
             toggle(p, privateChatPlaySoundKey, e.getClickedInventory(), 24, soundOnPrivateChatEnable, soundOnPrivateChatDisable);
         } else if ( Arrays.asList(titleOnPrivateChat, titleOnPrivateChatDisable, titleOnPrivateChatEnable).contains(clickedItem) ) {
@@ -171,6 +182,16 @@ public class MainInventory extends ClickableGUI {
         if ( entryOnRejoinDisable == null ) {
             entryOnRejoinDisable = ItemHelper.create(disable, Chat.f("&7現在の設定: &c無効"), "",
                     Chat.f("&7途中参加してもエントリーされません"), Chat.f("&7(デフォルト値)"));
+        }
+
+        if ( showKD == null ) {
+            showKD = ItemHelper.create(Material.NETHER_STAR, Chat.f("&c試合中のアクションバーにKDレートを表示する"), "", Chat.f("&7試合中のアクションバーに、その試合のKDレートが表示されます"), Chat.f("&7バーが長すぎて見えにくくなる可能性があります"));
+        }
+        if ( showKDEnable == null ) {
+            showKDEnable = ItemHelper.create(enable, Chat.f("&7現在の設定: &a有効"), Chat.f("&7試合時のアクションバーにKDレートが表示&aされます"));
+        }
+        if ( showKDDisable == null ) {
+            showKDDisable = ItemHelper.create(disable, Chat.f("&7現在の設定: &c無効"), Chat.f("&7試合時のアクションバーにKDレートは表示&cされません"));
         }
 
         if ( soundOnPrivateChat == null ) {
