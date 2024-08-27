@@ -23,8 +23,7 @@ public class InventoryClickListener implements Listener {
         }
 
         Player p = (Player) e.getWhoClicked();
-        Inventory openingInv = e.getInventory();
-        ClickableGUI gui = PlayerSettingsGUI.getPlugin().getGuiManager().getMatchGUI(openingInv);
+        ClickableGUI gui = PlayerSettingsGUI.getInstance().getGuiManager().getMatchGUI(p.getOpenInventory());
 
         if ( gui == null ) {
             return;

@@ -3,6 +3,7 @@ package net.azisaba.psgui.inventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 
 public abstract class ClickableGUI {
 
@@ -14,7 +15,7 @@ public abstract class ClickableGUI {
 
     public abstract void onClickInventory(InventoryClickEvent e);
 
-    public boolean isSameInventory(Inventory inv) {
-        return inv.getSize() == getSize() && getTitle().equals(inv.getTitle());
+    public boolean isSameInventory(InventoryView view) {
+        return view.getTopInventory().getSize() == getSize() && getTitle().equals(view.getTitle());
     }
 }

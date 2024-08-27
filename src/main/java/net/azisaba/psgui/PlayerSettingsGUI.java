@@ -11,13 +11,9 @@ import net.azisaba.psgui.inventory.SoundControlInventory;
 import net.azisaba.psgui.listener.InventoryClickListener;
 import net.azisaba.psgui.utils.Chat;
 
-import lombok.Getter;
-
 public class PlayerSettingsGUI extends JavaPlugin {
 
-    @Getter
     private static PlayerSettingsGUI plugin;
-    @Getter
     private ClickableGUIManager guiManager;
 
     @Override
@@ -36,6 +32,14 @@ public class PlayerSettingsGUI extends JavaPlugin {
         Bukkit.getPluginCommand("settings").setPermissionMessage(Chat.f("&c権限がありません！"));
 
         Bukkit.getLogger().info(getName() + " enabled.");
+    }
+
+    public ClickableGUIManager getGuiManager() {
+        return guiManager;
+    }
+
+    public static PlayerSettingsGUI getInstance() {
+        return plugin;
     }
 
     @Override

@@ -21,7 +21,7 @@ public class SettingsCommand implements CommandExecutor {
         Player p = (Player) sender;
 
         p.openInventory(
-                PlayerSettingsGUI.getPlugin().getGuiManager().getMatchInstance(MainInventory.class).createInventory(p));
+                PlayerSettingsGUI.getInstance().getGuiManager().getMatchInstance(MainInventory.class).createInventory(p));
         return true;
     }
 }

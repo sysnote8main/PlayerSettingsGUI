@@ -3,7 +3,7 @@
 
   <groupId>net.azisaba</groupId>
   <artifactId>PlayerSettingsGUI</artifactId>
-  <version>1.0.0</version>
+  <version>0.1.0</version>
 
   <name>${project.artifactId}</name>
   <description>A plugin that edit player settings using Inventory GUI</description>
@@ -70,20 +70,21 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.12.2-R0.1-SNAPSHOT</version>
+      <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.34</version>
-      <scope>provided</scope>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>24.0.0</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.github.AzisabaNetwork</groupId>
       <artifactId>PlayerSettings</artifactId>
       <version>1.0.0</version>
-      <scope>provided</scope>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/libs/PlayerSettings.jar</systemPath>
     </dependency>
   </dependencies>
 </project>

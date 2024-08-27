@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 
 public class ClickableGUIManager {
 
@@ -16,9 +17,9 @@ public class ClickableGUIManager {
         }
     }
 
-    public ClickableGUI getMatchGUI(Inventory inv) {
+    public ClickableGUI getMatchGUI(InventoryView view) {
         for ( ClickableGUI gui : guiList ) {
-            if ( gui.isSameInventory(inv) ) {
+            if ( gui.isSameInventory(view) ) {
                 return gui;
             }
         }
@@ -38,13 +39,8 @@ public class ClickableGUIManager {
 
     public void closeAllInventories() {
         Bukkit.getOnlinePlayers().forEach(p -> {
-
-            if ( p.getOpenInventory() == null || p.getOpenInventory().getTopInventory() == null ) {
-                return;
-            }
-
             for ( ClickableGUI gui : guiList ) {
-                if ( gui.getTitle().equals(p.getOpenInventory().getTopInventory().getTitle()) ) {
+                if ( gui.getTitle().equals(p.getOpenInventory().getTitle()) ) {
                     p.closeInventory();
                     return;
                 }

@@ -53,7 +53,7 @@ public class SoundControlInventory extends ClickableGUI {
         }
 
         if ( clicked.equals(backArrow) ) {
-            p.openInventory(PlayerSettingsGUI.getPlugin().getGuiManager().getMatchInstance(MainInventory.class)
+            p.openInventory(PlayerSettingsGUI.getInstance().getGuiManager().getMatchInstance(MainInventory.class)
                     .createInventory(p));
             p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
             return;
@@ -72,7 +72,7 @@ public class SoundControlInventory extends ClickableGUI {
             return;
         }
 
-        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+        SettingsData data = PlayerSettings.getInstance().getManager().getSettingsData(p);
         double current = 100;
 
         if ( data.isSet(key) ) {
@@ -94,14 +94,14 @@ public class SoundControlInventory extends ClickableGUI {
     }
 
     private ItemStack getMiddleSign(Player p) {
-        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+        SettingsData data = PlayerSettings.getInstance().getManager().getSettingsData(p);
 
         double percent = 100;
         if ( data.isSet(key) ) {
             percent = data.getDouble(key);
         }
 
-        ItemStack sign = ItemHelper.create(Material.SIGN, Chat.f("&7銃声の設定"), "", Chat.f("&a現在の音量: &e{0}%", percent),
+        ItemStack sign = ItemHelper.create(Material.OAK_SIGN, Chat.f("&7銃声の設定"), "", Chat.f("&a現在の音量: &e{0}%", percent),
                 "");
 
         return sign;
@@ -109,17 +109,17 @@ public class SoundControlInventory extends ClickableGUI {
 
     private void initItems() {
         if ( increaseLittle == null ) {
-            increaseLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 5, Chat.f("&a音量を {0} 上げる", 1));
+            increaseLittle = ItemHelper.createItem(Material.GREEN_STAINED_GLASS_PANE, 5, Chat.f("&a音量を {0} 上げる", 1));
         }
         if ( increaseLarge == null ) {
-            increaseLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 13, Chat.f("&a音量を {0} 上げる", 5));
+            increaseLarge = ItemHelper.createItem(Material.LIME_STAINED_GLASS_PANE, 13, Chat.f("&a音量を {0} 上げる", 5));
         }
 
         if ( decreaseLittle == null ) {
-            decreaseLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 1, Chat.f("&c音量を {0} 下げる", 1));
+            decreaseLittle = ItemHelper.createItem(Material.ORANGE_STAINED_GLASS_PANE, 1, Chat.f("&c音量を {0} 下げる", 1));
         }
         if ( decreaseLarge == null ) {
-            decreaseLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 14, Chat.f("&c音量を {0} 下げる", 5));
+            decreaseLarge = ItemHelper.createItem(Material.RED_STAINED_GLASS_PANE, 14, Chat.f("&c音量を {0} 下げる", 5));
         }
 
         if ( backArrow == null ) {

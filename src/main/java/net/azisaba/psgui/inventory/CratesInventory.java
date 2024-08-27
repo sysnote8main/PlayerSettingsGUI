@@ -1,6 +1,7 @@
 package net.azisaba.psgui.inventory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +26,11 @@ public class CratesInventory extends ClickableGUI {
     private final String ownNotifyKey = "CratesPlus.MuteOwnWinningAnnounce";
     private ItemStack addLittle, addLarge, subtractLittle, subtractLarge, backArrow;
     private ItemStack muteOwnEnable, muteOwnDisable;
+    private boolean initialized;
 
     @Override
     public Inventory createInventory(Player p) {
-        initItems();
+        if(!initialized) init();
         Inventory inv = Bukkit.createInventory(null, getSize(), getTitle());
 
         inv.setItem(0, subtractLarge);
@@ -43,7 +45,7 @@ public class CratesInventory extends ClickableGUI {
 
         inv.setItem(22, backArrow);
 
-        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+        SettingsData data = PlayerSettings.getInstance().getManager().getSettingsData(p);
         boolean muteOwn = data.isSet(ownNotifyKey) && data.getBoolean(ownNotifyKey);
         if ( muteOwn ) {
             inv.setItem(26, muteOwnEnable);
@@ -67,13 +69,13 @@ public class CratesInventory extends ClickableGUI {
 
         boolean processed = true;
         if ( item.equals(backArrow) ) {
-            p.openInventory(PlayerSettingsGUI.getPlugin().getGuiManager().getMatchInstance(MainInventory.class).createInventory(p));
+            p.openInventory(PlayerSettingsGUI.getInstance().getGuiManager().getMatchInstance(MainInventory.class).createInventory(p));
         } else if ( item.equals(muteOwnDisable) ) {
-            SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+            SettingsData data = PlayerSettings.getInstance().getManager().getSettingsData(p);
             data.set(ownNotifyKey, true);
             e.getClickedInventory().setItem(26, muteOwnEnable);
         } else if ( item.equals(muteOwnEnable) ) {
-            SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+            SettingsData data = PlayerSettings.getInstance().getManager().getSettingsData(p);
             data.set(ownNotifyKey, false);
             e.getClickedInventory().setItem(26, muteOwnDisable);
         } else {
@@ -99,7 +101,7 @@ public class CratesInventory extends ClickableGUI {
             return;
         }
 
-        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+        SettingsData data = PlayerSettings.getInstance().getManager().getSettingsData(p);
         double value = 1d;
         if ( data.isSet(key) ) {
             value = data.getDouble(key);
@@ -114,7 +116,7 @@ public class CratesInventory extends ClickableGUI {
         }
 
         // 小数点第2位で四捨五入
-        value = new BigDecimal(value).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+        value = new BigDecimal(value).setScale(1, RoundingMode.HALF_UP).doubleValue();
 
         data.set(key, value);
         p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
@@ -122,35 +124,19 @@ public class CratesInventory extends ClickableGUI {
         updateInventory(e.getClickedInventory(), p);
     }
 
-    private void initItems() {
-        if ( addLittle == null ) {
-            addLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 5, Chat.f("&e0.1%&a上げる"));
-        }
-        if ( addLarge == null ) {
-            addLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 13, Chat.f("&e1%&a上げる"));
-        }
-
-        if ( subtractLittle == null ) {
-            subtractLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 1, Chat.f("&e0.1%&c下げる"));
-        }
-        if ( subtractLarge == null ) {
-            subtractLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 14, Chat.f("&e1%&c下げる"));
-        }
-
-        if ( backArrow == null ) {
-            backArrow = ItemHelper.create(Material.ARROW, Chat.f("&6戻る"));
-        }
-
-        if ( muteOwnEnable == null ) {
-            muteOwnEnable = ItemHelper.create(Material.EYE_OF_ENDER, Chat.f("&e自分のログにも適用する &7(&a有効&7)"), Chat.f("&7自分のガチャログも&c上の設定が適用&7されます！"));
-        }
-        if ( muteOwnDisable == null ) {
-            muteOwnDisable = ItemHelper.create(Material.ENDER_PEARL, Chat.f("&e自分のログにも適用する &7(&c無効&7)"), Chat.f("&7自分のガチャログは確率を問わず&c全て&7チャットに流れます！"));
-        }
+    private void init() {
+        initialized = true;
+        addLittle = ItemHelper.createItem(Material.GREEN_STAINED_GLASS_PANE, 5, Chat.f("&e0.1%&a上げる"));
+        addLarge = ItemHelper.createItem(Material.LIME_STAINED_GLASS_PANE, 13, Chat.f("&e1%&a上げる"));
+        subtractLittle = ItemHelper.createItem(Material.ORANGE_STAINED_GLASS_PANE, 1, Chat.f("&e0.1%&c下げる"));
+        subtractLarge = ItemHelper.createItem(Material.RED_STAINED_GLASS_PANE, 14, Chat.f("&e1%&c下げる"));
+        backArrow = ItemHelper.create(Material.ARROW, Chat.f("&6戻る"));
+        muteOwnEnable = ItemHelper.create(Material.ENDER_EYE, Chat.f("&e自分のログにも適用する &7(&a有効&7)"), Chat.f("&7自分のガチャログも&c上の設定が適用&7されます！"));
+        muteOwnDisable = ItemHelper.create(Material.ENDER_PEARL, Chat.f("&e自分のログにも適用する &7(&c無効&7)"), Chat.f("&7自分のガチャログは確率を問わず&c全て&7チャットに流れます！"));
     }
 
     private ItemStack getMiddleSign(Player p) {
-        SettingsData data = PlayerSettings.getPlugin().getManager().getSettingsData(p);
+        SettingsData data = PlayerSettings.getInstance().getManager().getSettingsData(p);
 
         double percentage = 1d;
         if ( data.isSet(key) ) {
@@ -168,12 +154,12 @@ public class CratesInventory extends ClickableGUI {
             lore.add(5, "");
         }
 
-        return ItemHelper.create(Material.SIGN, Chat.f("&7表示しない当たりの確率"), lore.toArray(new String[lore.size()]));
+        return ItemHelper.create(Material.OAK_SIGN, Chat.f("&7表示しない当たりの確率"), lore.toArray(new String[lore.size()]));
     }
 
     private void updateInventory(Inventory inv, Player p) {
         ItemStack middleSign = inv.getItem(4);
-        if ( middleSign == null || middleSign.getType() != Material.SIGN ) {
+        if ( middleSign == null || middleSign.getType() != Material.OAK_SIGN ) {
             p.openInventory(createInventory(p));
             return;
         }
