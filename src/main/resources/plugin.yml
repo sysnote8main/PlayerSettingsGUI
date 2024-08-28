@@ -5,6 +5,7 @@ authors: ["siloneco", "YukiLeafX"]
 description: ${project.description}
 website: ${project.url}
 softdepend: ["PlayerSettings"]
+api-version: 1.16
 commands:
   settings:
     permission: playersettingsgui.command.settings

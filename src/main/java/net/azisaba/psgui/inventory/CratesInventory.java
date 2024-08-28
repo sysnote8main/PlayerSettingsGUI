@@ -124,17 +124,17 @@ public class CratesInventory extends ClickableGUI {
 
     private void initItems() {
         if ( addLittle == null ) {
-            addLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 5, Chat.f("&e0.1%&a上げる"));
+            addLittle = ItemHelper.createItem(Material.LIME_STAINED_GLASS_PANE, 5, Chat.f("&e0.1%&a上げる"));
         }
         if ( addLarge == null ) {
-            addLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 13, Chat.f("&e1%&a上げる"));
+            addLarge = ItemHelper.createItem(Material.GREEN_STAINED_GLASS_PANE, 13, Chat.f("&e1%&a上げる"));
         }
 
         if ( subtractLittle == null ) {
-            subtractLittle = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 1, Chat.f("&e0.1%&c下げる"));
+            subtractLittle = ItemHelper.createItem(Material.ORANGE_STAINED_GLASS_PANE, 1, Chat.f("&e0.1%&c下げる"));
         }
         if ( subtractLarge == null ) {
-            subtractLarge = ItemHelper.createItem(Material.STAINED_GLASS_PANE, 14, Chat.f("&e1%&c下げる"));
+            subtractLarge = ItemHelper.createItem(Material.RED_STAINED_GLASS_PANE, 14, Chat.f("&e1%&c下げる"));
         }
 
         if ( backArrow == null ) {
@@ -142,7 +142,7 @@ public class CratesInventory extends ClickableGUI {
         }
 
         if ( muteOwnEnable == null ) {
-            muteOwnEnable = ItemHelper.create(Material.EYE_OF_ENDER, Chat.f("&e自分のログにも適用する &7(&a有効&7)"), Chat.f("&7自分のガチャログも&c上の設定が適用&7されます！"));
+            muteOwnEnable = ItemHelper.create(Material.ENDER_EYE, Chat.f("&e自分のログにも適用する &7(&a有効&7)"), Chat.f("&7自分のガチャログも&c上の設定が適用&7されます！"));
         }
         if ( muteOwnDisable == null ) {
             muteOwnDisable = ItemHelper.create(Material.ENDER_PEARL, Chat.f("&e自分のログにも適用する &7(&c無効&7)"), Chat.f("&7自分のガチャログは確率を問わず&c全て&7チャットに流れます！"));
@@ -168,12 +168,12 @@ public class CratesInventory extends ClickableGUI {
             lore.add(5, "");
         }
 
-        return ItemHelper.create(Material.SIGN, Chat.f("&7表示しない当たりの確率"), lore.toArray(new String[lore.size()]));
+        return ItemHelper.create(Material.OAK_SIGN, Chat.f("&7表示しない当たりの確率"), lore.toArray(new String[lore.size()]));
     }
 
     private void updateInventory(Inventory inv, Player p) {
         ItemStack middleSign = inv.getItem(4);
-        if ( middleSign == null || middleSign.getType() != Material.SIGN ) {
+        if ( middleSign == null || middleSign.getType() != Material.OAK_SIGN ) {
             p.openInventory(createInventory(p));
             return;
         }

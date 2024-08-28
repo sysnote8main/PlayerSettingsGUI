@@ -146,7 +146,7 @@ public class MainInventory extends ClickableGUI {
         return Chat.f("&cPlayer Settings &e- &aMain");
     }
 
-    private final Material enable = Material.EYE_OF_ENDER, disable = Material.ENDER_PEARL;
+    private final Material enable = Material.ENDER_EYE, disable = Material.ENDER_PEARL;
 
     private void initItems() {
         if ( crates == null ) {
@@ -154,12 +154,12 @@ public class MainInventory extends ClickableGUI {
                     Chat.f("&7これは自分の当たりには反映されません"));
         }
         if ( sound == null ) {
-            sound = ItemHelper.create(Material.DIAMOND_SPADE, Chat.f("&6銃の音量設定"), Chat.f("&7銃の音量を調節できます"),
+            sound = ItemHelper.create(Material.DIAMOND_SHOVEL, Chat.f("&6銃の音量設定"), Chat.f("&7銃の音量を調節できます"),
                     Chat.f("&7うるさい場合はこの値を下げてください"));
         }
 
         if ( rankingAno == null ) {
-            rankingAno = ItemHelper.create(Material.SIGN, Chat.f("&cキルランキングを匿名にする"), "",
+            rankingAno = ItemHelper.create(Material.OAK_SIGN, Chat.f("&cキルランキングを匿名にする"), "",
                     Chat.f("&a有効 &7で &4{0} &7に置き換えられます", "{匿名プレイヤー}"), Chat.f("&c無効 &7でMCIDが表示されます"));
         }
         if ( rankingAnoStatusEnable == null ) {
@@ -208,7 +208,7 @@ public class MainInventory extends ClickableGUI {
         }
 
         if ( titleOnPrivateChat == null ) {
-            titleOnPrivateChat = ItemHelper.create(Material.SIGN, Chat.f("&c個人チャット受信時にタイトルを表示する"), "",
+            titleOnPrivateChat = ItemHelper.create(Material.OAK_SIGN, Chat.f("&c個人チャット受信時にタイトルを表示する"), "",
                     Chat.f("&7個人チャットを受け取ったときに画面上にメッセージを表示します"));
         }
         if ( titleOnPrivateChatEnable == null ) {
